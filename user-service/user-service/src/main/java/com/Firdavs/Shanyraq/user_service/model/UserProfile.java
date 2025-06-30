@@ -15,6 +15,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 })
 @Data
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class UserProfile {
     @Id
@@ -48,7 +50,6 @@ public class UserProfile {
     private String profilePhoto;
 
     private String coverLetter;
-
 
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isSurveyCompleted;

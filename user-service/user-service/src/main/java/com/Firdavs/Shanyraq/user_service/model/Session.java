@@ -42,6 +42,10 @@ public class Session {
     @Column(nullable = false, length = 255, unique = true)
     private String refreshToken;
 
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean revoked;
+
+
     private LocalDateTime createdAt;
 
     private LocalDateTime expiresAt;

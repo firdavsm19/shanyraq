@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "password_reset_models", indexes = { 
     @Index(name = "idx_token", columnList = "token"),
     @Index(name = "idx_expires_at", columnList = "expires_at")
