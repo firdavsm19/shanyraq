@@ -4,12 +4,13 @@ import com.Firdavs.Shanyraq.user_service.dto.PhotoRequest;
 import com.Firdavs.Shanyraq.user_service.dto.UserDto;
 import com.Firdavs.Shanyraq.user_service.dto.UserProfileDto;
 import com.Firdavs.Shanyraq.user_service.dto.UserProfileRequest;
-import com.Firdavs.Shanyraq.user_service.model.Session;
 import com.Firdavs.Shanyraq.user_service.model.User;
 import com.Firdavs.Shanyraq.user_service.model.UserAuth;
-import com.Firdavs.Shanyraq.user_service.repository.SessionRepository;
 import com.Firdavs.Shanyraq.user_service.repository.UserProfileRepository;
 import com.Firdavs.Shanyraq.user_service.repository.UserRepository;
+import com.Firdavs.Shanyraq.user_service.exceptions.UserNotVerifiedException;
+import com.Firdavs.Shanyraq.user_service.exceptions.UserNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserProfileService {
     private final UserRepository userRepository;
-    private final SessionRepository sessionRepository;
     private final UserProfileRepository userProfileRepository;
 
     public UserProfileDto getProfile(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User is not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         return UserProfileDto.builder()
                 .user(mapToUserDto(user, user.getUserAuth()))
@@ -36,10 +36,10 @@ public class UserProfileService {
     }
 
     public UserProfileDto putProfile(Long userId, UserProfileRequest request){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         if(!user.getUserAuth().isVerified()){
-            throw new RuntimeException("User is not verified");
+            throw new UserNotVerifiedException(user.getEmail());
         }
         user.getUserProfile().setGender(request.getGender());
         user.getUserProfile().setBirthDate(request.getBirthdate());
@@ -58,9 +58,9 @@ public class UserProfileService {
     }
 
     public Map<String, String> postPhoto(Long userId, PhotoRequest request){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
-        if(!user.getUserAuth().isVerified()) throw new RuntimeException("User is not verified");
+        if(!user.getUserAuth().isVerified()) throw new UserNotVerifiedException(user.getEmail());
 
         user.getUserProfile().setProfilePhoto(request.getProfilePhoto());
         userProfileRepository.save(user.getUserProfile());

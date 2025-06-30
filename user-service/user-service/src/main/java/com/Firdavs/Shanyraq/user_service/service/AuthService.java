@@ -15,6 +15,11 @@ import com.Firdavs.Shanyraq.user_service.service.utility.CodeGeneratorService;
 import com.Firdavs.Shanyraq.user_service.repository.SessionRepository;
 import com.Firdavs.Shanyraq.user_service.model.Session;
 import com.Firdavs.Shanyraq.user_service.service.utility.TokenService;
+import com.Firdavs.Shanyraq.user_service.exceptions.InvalidCredentialException;
+import com.Firdavs.Shanyraq.user_service.exceptions.UserNotFoundException;
+import com.Firdavs.Shanyraq.user_service.exceptions.UserNotVerifiedException;
+import com.Firdavs.Shanyraq.user_service.exceptions.InvalidConfirmationException;
+import com.Firdavs.Shanyraq.user_service.exceptions.TokenExpiredException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -68,16 +73,16 @@ public class AuthService {
     // Login a user
     public LoginResponse login(LoginRequest request){
         LocalDateTime now = LocalDateTime.now();
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException(request.getEmail()));
         UserAuth userAuth = user.getUserAuth();
 
         if(!passwordService.matches(request.getPassword(), userAuth.getPassword())){
-            throw new RuntimeException("Invalid password");
+            throw new InvalidCredentialException("Invalid password");
         }
 
-        // if(!userAuth.isVerified()){
-        //     throw new RuntimeException("User is not verified");
-        // }
+        if(!userAuth.isVerified()){
+            throw new UserNotVerifiedException("User is not verified");
+        }
 
         Session session = Session.builder()
         .user(user)
@@ -100,7 +105,7 @@ public class AuthService {
 
     public Map<String, String> logout(String accessToken){
         Session session = sessionRepository.findByAccessToken(accessToken)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired access token"));
+                .orElseThrow(() -> new InvalidCredentialException("Invalid or expired access token"));
 
         session.setRevoked(true);
         session.setLastActivityAt(LocalDateTime.now());
@@ -110,7 +115,7 @@ public class AuthService {
     }
 
     public UserDto getMe(Long userId){
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         UserAuth userAuth = user.getUserAuth();
 
@@ -118,14 +123,14 @@ public class AuthService {
     }
 
     public Map<String, String> verify(VerifyRequest request){
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new UserNotFoundException(request.getEmail()));
 
         if(user.getUserAuth().isVerified()){
-            throw new RuntimeException("User has already been verified");
+            throw new UserNotVerifiedException(request.getEmail());
         }
 
         if(!user.getUserAuth().getConfirmationCode().equals(request.getConfirmationCode())){
-            throw new RuntimeException("Invalid Confirmation Code");
+            throw new InvalidConfirmationException();
         }
 
         user.getUserAuth().setVerified(true);
@@ -134,15 +139,15 @@ public class AuthService {
 
         return Map.of("message", "User is successfully verified");
     }
-
+    
     public LoginResponse refresh(RefreshRequest request){
          Session session = sessionRepository.findByRefreshToken(request.getRefreshToken()).orElseThrow(() -> new RuntimeException("Session is not found"));
 
-         if(session.isRevoked()) throw new RuntimeException("Token has been revoked");
+         if(session.isRevoked()) throw new TokenExpiredException("Token has been revoked");
 
-         if(session.getExpiresAt().isBefore(LocalDateTime.now())) throw new RuntimeException("Token has been expired");
+         if(session.getExpiresAt().isBefore(LocalDateTime.now())) throw new TokenExpiredException("Token has been expired");
 
-         if(!session.getUser().getUserAuth().isVerified()) throw new RuntimeException("User is not verified");
+         if(!session.getUser().getUserAuth().isVerified()) throw new UserNotVerifiedException(session.getUser().getEmail());
 
          session.setAccessToken(tokenService.generateAccessToken(session.getUser()));
          session.setRefreshToken(tokenService.generateRefreshToken(session.getUser()));

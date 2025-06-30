@@ -4,6 +4,8 @@ import com.Firdavs.Shanyraq.user_service.model.PasswordResetModel;
 import com.Firdavs.Shanyraq.user_service.model.User;
 import com.Firdavs.Shanyraq.user_service.repository.PasswordResetModelRepository;
 import com.Firdavs.Shanyraq.user_service.repository.UserRepository;
+import com.Firdavs.Shanyraq.user_service.exceptions.TokenExpiredException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,7 @@ public class PasswordResetService {
         PasswordResetModel model = passwordResetModelRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Token is not found"));
 
         if(model.isUsed() || model.getExpiresAt().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Token expired or already used");
+            throw new TokenExpiredException("Token expired or already used");
         }
 
         return Map.of("message", "Token is valid");
@@ -51,7 +53,7 @@ public class PasswordResetService {
         PasswordResetModel model = passwordResetModelRepository.findByToken(token).orElseThrow(() -> new RuntimeException("Invalid token"));
 
         if(model.isUsed() || model.getExpiresAt().isBefore(LocalDateTime.now())){
-            throw new RuntimeException("Token is expired or already used");
+            throw new TokenExpiredException("Token is expired or already used");
         }
 
         User user = model.getUser();
