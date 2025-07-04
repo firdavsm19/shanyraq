@@ -27,9 +27,9 @@ public class PasswordResetController {
         return ResponseEntity.ok(passwordResetService.confirmToken(token));
     }
 
+    // PUT /api/password/change
     @PutMapping("/change")
     public ResponseEntity<Map<String, String>> changePassword(@RequestParam String token, @RequestParam String newPassword){
         return ResponseEntity.ok(passwordResetService.changePassword(token, newPassword));
     }
-    // PUT /api/password/change
 }
