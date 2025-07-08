@@ -20,26 +20,15 @@ public class PricingInfo {
     private Long id;
 
     @Column(name = "monthly_rent", nullable = false)
-    @Min(1000)
-    @Max(1000000000)
     private Integer monthlyRent;
-
-    @Column(name = "is_deposit_required", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isDepositRequired;
 
     @Column(name = "deposit_amount")
     private Integer depositAmount;
 
-    @Column(name = "is_utilities_included", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isUtilitiesIncluded;
-
-    @Column(name = "estimated_utilities_cost")
-    private Integer estimatedUtilitiesCost;
+    private boolean isUtilitiesIncluded = false;
 
     @Column(name = "payment_frequency")
     @Enumerated(EnumType.STRING)
     private PaymentFrequency paymentFrequency;
 
-    @Column(name = "advance_payment_months")
-    private Integer advancePaymentMonths;
 }

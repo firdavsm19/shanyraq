@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,12 +23,7 @@ public class ApartmentInfo {
     private Long id;
 
     @Column(name = "quantity_of_rooms", nullable = false)
-    private String quantityOfRooms;
-
-    @Column(name = "number_of_floors")
-    @Min(1)
-    @Max(100)
-    private Integer numberOfFloors;
+    private Integer quantityOfRooms;
 
     @Column(name = "max_floor_building")
     @Min(1)
@@ -42,22 +39,9 @@ public class ApartmentInfo {
     @Enumerated(EnumType.STRING)
     private TypeOfHousing typeOfHousing;
 
-    @Column(name = "apartments_info", length = 5000)
-    @Size(max = 5000)
-    private String apartmentsInfo;
-
-    @Column(name = "is_furnished", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isFurnished;
-
-    @Column(name = "has_parking", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean hasParking;
-
-    @Column(name = "has_internet", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean hasInternet;
-
-    @Column(name = "has_air_conditioning", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean hasAirConditioning;
-
-    @Column(name = "has_balcony", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean hasBalcony;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "aparment_amenities", joinColumns = @JoinColumn(name = "apartment_info_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "amenity")
+    private Set<Amenity> amenities;
 }

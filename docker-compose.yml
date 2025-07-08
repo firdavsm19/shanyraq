@@ -2,7 +2,7 @@ services:
   user-mysql:
     image: mysql:8.0
     ports:
-      - "${USER_MYSQL_PORT:-3306}:3306"
+      - "${USER_MYSQL_PORT:-3307}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_DATABASE: ${USER_MYSQL_DATABASE:-userdb}
@@ -20,7 +20,7 @@ services:
   announcement-mysql:
     image: mysql:8.0
     ports:
-      - "${ANNOUNCEMENT_MYSQL_PORT:-3306}:3306"
+      - "${ANNOUNCEMENT_MYSQL_PORT:-3308}:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_DATABASE: ${ANNOUNCEMENT_MYSQL_DATABASE:-announcementdb} 
@@ -34,10 +34,31 @@ services:
       timeout: 20s
       retries: 10
       interval: 30s
+
+  group-mysql:
+    image: mysql:8.0
+    ports:
+      - "${GROUP_MYSQL_PORT:-3309}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${GROUP_MYSQL_DATABASE:-groupdb}
+      MYSQL_USER: ${MYSQL_USER:-user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-password}
+    volumes:
+      - group_mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+
   
 
 volumes:
   user_mysql_data:
     driver: local
   announcement_mysql_data:
+    driver: local
+  group_mysql_data:
     driver: local

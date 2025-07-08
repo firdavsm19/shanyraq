@@ -16,13 +16,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 public class HousingOffer extends BaseAnnouncement {
 
     @Column(name = "available_from", nullable = false)
@@ -34,31 +35,19 @@ public class HousingOffer extends BaseAnnouncement {
     @Column(name = "property_description", length = 5000)
     private String propertyDescription;
 
-    @Column(name = "is_owner_occupied", columnDefinition = "boolean default false")
-    private boolean isOwnerOccupied;
-
-    @Column(name = "immediate_availability", columnDefinition = "boolean default false")
-    private boolean immediateAvailability;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "apartment_info_id")
     private ApartmentInfo apartmentInfo;
 
-    private String photo;
-
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "location_info_id")
     private LocationInfo locationInfo;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "tenant_preferences_id")
     private TenantPreferences tenantPreferences;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pricing_info_id")
     private PricingInfo pricingInfo;
-
-    @OneToMany(mappedBy = "housingOffer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<HousingApplication> applications = new ArrayList<>();
-
 }

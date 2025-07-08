@@ -25,16 +25,13 @@ public class LocationInfo {
     @Column(name = "district_id")
     private Long districtId;
 
-    @Column(name = "micro_district_id")
-    private Long microDistrictId;
-
     @Column(name = "address", nullable = false, length = 500)
     @Size(min = 10, max = 500)
     private String address;
 
-    @Column(name = "coords_x", nullable = false)
-    private BigDecimal coordsX;
+    @Column(name = "lat", nullable = false)
+    private BigDecimal lat;
 
-    @Column(name = "coords_y", nullable = false)
-    private BigDecimal coordsY;
+    @Column(name = "lon", nullable = false)
+    private BigDecimal lon;
 }

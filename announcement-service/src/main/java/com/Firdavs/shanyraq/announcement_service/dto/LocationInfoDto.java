@@ -25,14 +25,11 @@ public class LocationInfoDto {
     @Positive(message = "District must be a positive number")
     private Long districtId;
 
-    @Positive(message = "Micro district must be a positive number")
-    private Long microDistrictId;
-
     @NotNull(message = "Address is required")
     @Size(min = 10, max = 255, message = "Address must be between 10 and 255 characters")
     private String address;
 
-    private BigDecimal coordsX;
-    private BigDecimal coordsY;
+    private BigDecimal lat;
+    private BigDecimal lon;
     
 }

@@ -29,30 +29,16 @@ public class TenantPreferences {
     @Max(100)
     private Integer maxAge;
 
-    @Column(name = "preferred_gender")
-    @Enumerated(EnumType.STRING)
-    private Gender preferredGender;
-
     @Column(name = "max_occupants")
     @Min(1)
     @Max(10)
     private Integer maxOccupants;
 
-    @Column(name = "pets_allowed", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean petsAllowed;
+    private boolean petsAllowed = false;
 
-    @Column(name = "students_allowed", columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private boolean studentsAllowed;
+    private boolean smokingAllowed = false;
 
-    @Column(name = "smoking_allowed", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean smokingAllowed;
+    private boolean requiresReferences = false;
 
-    @Column(name = "requires_references", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean requiresReferences;
-
-    @Column(name = "requires_income_proof", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean requiresIncomeProof;
-
-    @Column(name = "minimum_income")
-    private Integer minimumIncome;
+    private boolean requiresIncomeProof = false;
 }

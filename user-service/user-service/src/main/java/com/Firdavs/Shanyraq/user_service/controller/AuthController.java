@@ -1,6 +1,7 @@
 package com.Firdavs.Shanyraq.user_service.controller;
 
 import com.Firdavs.Shanyraq.user_service.dto.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -55,14 +56,20 @@ public class AuthController {
 
     // GET /api/auth/me
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getMe() {
+    public ResponseEntity<UserDto> getMe(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        System.out.println(">>> Authorization header: " + header);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(">>> Authentication: " + authentication);
+
         String userId = authentication.getName();
         UserDto userDto = authService.getMe(Long.parseLong(userId));
         return ResponseEntity.ok(userDto);
     }
 
 
-   // POST /api/auth/resend-verification
+
+    // POST /api/auth/resend-verification
     
 }

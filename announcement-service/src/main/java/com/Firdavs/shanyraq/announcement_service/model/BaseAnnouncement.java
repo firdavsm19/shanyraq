@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -31,11 +32,6 @@ public abstract class BaseAnnouncement {
 
     @Column(name = "contact_name", nullable = false, length = 255)
     private String contactName;
-
-    @Column(name = "contact_phone_number", nullable = false, length = 255)
-    private String contactPhoneNumber;
-
-    // photo for houseoffer
 
     @Column(name = "is_archived", columnDefinition = "boolean default false")
     private boolean isArchived;
